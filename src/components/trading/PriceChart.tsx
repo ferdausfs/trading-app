@@ -24,6 +24,7 @@ import {
   createChart,
   type IChartApi,
   type ISeriesApi,
+  type MouseEventParams,
   type UTCTimestamp,
 } from 'lightweight-charts';
 import { bollinger, ema, macd, rsi, toLinePoints, closes } from '@/lib/indicators';
@@ -207,14 +208,17 @@ export default function PriceChart({ candles, configs, loading, error, onRetry, 
     seriesRef.current = { candle: candleSeries, volume: volumeSeries, ema1, ema2, bbU, bbM, bbL, rsi: rsiSeries, macdLine, macdSig, macdHist };
 
     // ক্রসহেয়ার লিজেন্ড
-    const unsubCross = chart.subscribeCrosshairMove((param) => {
+    // ⚠️ lightweight-charts v5-এ subscribe* ফাংশন কিছুই return করে না (void)।
+    // আনসাবস্ক্রাইব করতে হয় একই handler রেফারেন্স দিয়ে unsubscribe* কল করে।
+    const crosshairHandler = (param: MouseEventParams) => {
       if (!param.time) {
         updateLegendFromLast();
         return;
       }
       const candle = candleByTimeRef.current.get(param.time as number);
       if (candle) buildLegend(candle);
-    });
+    };
+    chart.subscribeCrosshairMove(crosshairHandler);
 
     function updateLegendFromLast() {
       const arr = candleByTimeRef.current;
@@ -245,7 +249,7 @@ export default function PriceChart({ candles, configs, loading, error, onRetry, 
     }
 
     return () => {
-      unsubCross();
+      chart.unsubscribeCrosshairMove(crosshairHandler);
       chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
