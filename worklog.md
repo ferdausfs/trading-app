@@ -62,3 +62,26 @@ Stage Summary:
 - LIVE REPO: https://github.com/ferdausfs/trading-app (main) — সম্পূর্ণ প্রজেক্ট ডেলিভারড
 - ইউজার এখন যা করতে পারবে: এই চ্যাটের Preview দেখা, লোকাল clone + npm run dev, এই রিপো থেকে Render/Vercel ফ্রি ডিপ্লয়, Expo Go দিয়ে Android টেস্ট
 - রিপোতে কোনো secret নেই (.env untracked, remote URL থেকে token সরানো)
+
+---
+Task ID: 4
+Agent: Main Agent (Z.ai)
+Task: PriceChart runtime error fix (unsubCross) + Render deploy fail fix (prisma client)
+
+Work Log:
+- Bug ১: `unsubCross is not a function` — lightweight-charts v5-এ subscribeCrosshairMove() void return করে; cleanup-এ ভুলভাবে return value call করা হচ্ছিল → নাম-ধারী handler + chart.unsubscribeCrosshairMove(handler) প্যাটার্নে ঠিক করা হয়েছে (PriceChart.tsx:210-221, 252); MouseEventParams type import
+- agent-browser দিয়ে ভেরিফিকেশন: পেজ লোড OK, errors খালি, MACD টগল OFF→ON (effect cleanup path — আগের crash point) দুইবার — কোনো error নেই; স্ক্রিনশট: scripts/fix-1-initial.png, fix-2-after-toggle.png
+- Bug ২: Render deploy fail — `Cannot find module '.prisma/client/default'`; root cause: build-এ prisma generate কখনোই চলে না
+  - package.json: `postinstall: prisma generate` + build script-এর শুরুতে `prisma db push --accept-data-loss` (fallback echo সহ)
+  - db.ts: ensureSqliteDir() guard — file: URL-এর parent dir (cwd ও schema-relative দুটো বেস) runtime-এ তৈরি
+  - db/.gitkeep ট্র্যাক করা হয়েছে (clone-এ db/ ফোল্ডার থাকবে)
+  - README: Render সেকশন আপডেট (bun build কমান্ড, absolute DATABASE_URL সুপারিশ, ephemeral disk নোট, prisma ট্রাবলশুটিং)
+- লোকাল সিমুলেশন টেস্ট: node_modules/.prisma ডিলিট → bun install → postinstall দিয়ে client regenerate ✓ → bun run build (db push + next build + standalone copy) সম্পূর্ণ PASS, /api/indicators page-data collect ✓
+- টেস্টের পরেও dev server :3000 লাইভ (200), watchlist API কাজ করছে, .next/standalone তৈরি
+- Push: 9f18ea0 (PriceChart fix, auto-commit হয়েছিল) + f9c45f6 (deploy fix) → origin/main; পুশের পর remote URL থেকে token আবার সরানো হয়েছে
+
+Stage Summary:
+- দুটোই ঠিক হয়েছে ও GitHub-এ push হয়েছে (ferdausfs/trading-app main @ f9c45f6)
+- Render autoDeploy চালু থাকলে নতুন deploy নিজে থেকেই শুরু হবে; না হলে Manual Deploy → Deploy latest commit / Clear build cache & deploy
+- Render build এখন সেলফ-কন্টেইনড: bun install (postinstall → prisma generate) → bun run build (db push → next build → standalone copy)
+- নোট: ফ্রি প্ল্যানে deploy/restart-এ SQLite ডেটা রিসেট হয় (চার্টে প্রভাব নেই) — README-তে ডকুমেন্টেড
