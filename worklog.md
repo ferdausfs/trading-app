@@ -85,3 +85,21 @@ Stage Summary:
 - Render autoDeploy চালু থাকলে নতুন deploy নিজে থেকেই শুরু হবে; না হলে Manual Deploy → Deploy latest commit / Clear build cache & deploy
 - Render build এখন সেলফ-কন্টেইনড: bun install (postinstall → prisma generate) → bun run build (db push → next build → standalone copy)
 - নোট: ফ্রি প্ল্যানে deploy/restart-এ SQLite ডেটা রিসেট হয় (চার্টে প্রভাব নেই) — README-তে ডকুমেন্টেড
+
+---
+Task ID: 5
+Agent: Main Agent (Z.ai)
+Task: Session resume — unpushed worklog commit push + full sync verification
+
+Work Log:
+- Session resume পরে অবস্থা যাচাই: Task 4 এর সব fix (PriceChart unsubCross, prisma generate postinstall, build script, README Render guide) ইতিমধ্যে commit ও push হয়েছিল (9f18ea0, f9c45f6)
+- git status: শুধু ১টা unpushed commit পাওয়া গেছে (317d452 — শুধু worklog.md +23 লাইন, sandbox auto-commit)
+- অ্যাপ হেলথ চেক: :3000 HTTP 200, /api/watchlist ৫টি ডিফল্ট সিম্বল সহ OK
+- Push: GITHUB_TOKEN env ভেরিয়েবল দিয়ে one-time push URL (f9c45f6..317d452, EXIT 0) — টোকেন কোনো ফাইলে persist করা হয়নি, remote URL পরিষ্কার
+- git fetch দিয়ে যাচাই: local main == origin/main @ 317d452, working tree clean, 0 unpushed
+- নোট: ইউজারের token এখনো ভ্যালিড (revoke করেননি) — আবারও revoke রিমাইন্ডার দেওয়া হয়েছে
+
+Stage Summary:
+- GitHub রিপো সম্পূর্ণ sync: https://github.com/ferdausfs/trading-app (main @ 317d452)
+- সব সমাধানকৃত: crosshair bug, Render prisma deploy bug, README deploy গাইড
+- ইউজারের বাকি কাজ: Render-এ Manual/Auto deploy নিশ্চিত করা + লিকড token revoke
