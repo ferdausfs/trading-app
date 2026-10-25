@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "TradeLite",
+    "slug": "tradelite-mobile",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0D10",
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.tradelite.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B0D10"
+      }
+    },
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}

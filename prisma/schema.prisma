@@ -1,0 +1,34 @@
+// TradeLite — Prisma Schema (SQLite)
+// ওয়াচলিস্ট এবং ইন্ডিকেটর কনফিগারেশন সংরক্ষণের জন্য
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ব্যবহারকারীর ফলো করা ট্রেডিং পেয়ার (যেমন BTCUSDT)
+model WatchlistItem {
+  id        Int      @id @default(autoincrement())
+  symbol    String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ইন্ডিকেটর সেটিংস: key = "ema" | "bb" | "rsi" | "macd"
+// params ফিল্ডে JSON সংরক্ষিত হয়, যেমন:
+//   ema:  {"periods":[20,50]}
+//   bb:   {"period":20,"mult":2}
+//   rsi:  {"period":14}
+//   macd: {"fast":12,"slow":26,"signal":9}
+model IndicatorConfig {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  enabled   Boolean  @default(true)
+  params    String   @default("{}")
+  updatedAt DateTime @updatedAt
+}

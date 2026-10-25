@@ -1,0 +1,11 @@
+{
+  "name": "market-relay",
+  "version": "1.0.0",
+  "description": "Socket.IO market data relay: subscribes to Binance WebSocket streams and broadcasts to clients",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.1"
+  }
+}
