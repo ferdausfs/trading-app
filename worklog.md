@@ -44,3 +44,21 @@ Stage Summary:
 - একমাত্র ব্লকার: fresh GitHub token (পুরনোটা চ্যাটে লিক → অবশ্যই revoke করতে হবে)
 - User গাইডেন্স: নতুন token (repo scope) দিলে main agent push করে দেবে, অথবা self-serve: GITHUB_TOKEN=ghp_xxx bash push-to-github.sh
 - কোথা থেকে ব্যবহার করা যাবে: এই চ্যাটের live preview (:3000), লোকাল npm run dev, GitHub push-এর পর Render/Vercel ফ্রি ডিপ্লয়, Expo Go দিয়ে Android
+
+---
+Task ID: 3
+Agent: Main Agent (Z.ai)
+Task: ইউজারের নতুন token দিয়ে GitHub push সম্পাদন
+
+Work Log:
+- ইউজার fresh PAT দিয়েছে → push-to-github.sh চালানো হয়েছে (GITHUB_TOKEN env থেকে, কোনো ফাইলে লেখা হয়নি)
+- Token বৈধ: GitHub user = ferdausfs; trading-app রিপো API দিয়ে তৈরি (HTTP 201)
+- main branch push সফল → https://github.com/ferdausfs/trading-app (new branch, tracking set)
+- Push-এর পরে নিরাপত্তা পরিষ্কার: git remote set-url দিয়ে .git/config থেকে token সরানো হয়েছে — token প্রজেক্টের কোথাও persist করা হয়নি
+- রিপো লাইভ যাচাই: github.com/ferdausfs/trading-app → HTTP 200; raw README (বাংলা গাইড) পাওয়া যাচ্ছে
+- ইউজারকে মনে করিয়ে দেওয়া হয়েছে: চ্যাটে পেস্ট করা token = leaked → ব্যবহার শেষে revoke করতে হবে
+
+Stage Summary:
+- LIVE REPO: https://github.com/ferdausfs/trading-app (main) — সম্পূর্ণ প্রজেক্ট ডেলিভারড
+- ইউজার এখন যা করতে পারবে: এই চ্যাটের Preview দেখা, লোকাল clone + npm run dev, এই রিপো থেকে Render/Vercel ফ্রি ডিপ্লয়, Expo Go দিয়ে Android টেস্ট
+- রিপোতে কোনো secret নেই (.env untracked, remote URL থেকে token সরানো)
