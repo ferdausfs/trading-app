@@ -131,10 +131,14 @@ eas build -p android --profile preview   # EAS ফ্রি টিয়ার�
 
 1. GitHub রিপো তৈরি করে কোড push করুন
 2. Render → **New Web Service** → রিপো সংযুক্ত করুন
-3. Build: `npm install && npm run build && npm run db:push`
-4. Start: `npm start` (standalone সার্ভার চালু হয়)
-5. এনভায়রনমেন্ট ভেরিয়েবল: `DATABASE_URL=file:./db/prod.db`
+3. Build: `bun install; bun run build` — একটাই কমান্ড; `postinstall` নিজে থেকেই `prisma generate` চালায়, build-এর শুরুতে `prisma db push` (টেবিল তৈরি) হয় (npm হলে: `npm install && npm run build`)
+4. Start: `bun run start` (npm হলে `npm start`) — standalone সার্ভার চালু হয়
+5. এনভায়রনমেন্ট ভেরিয়েবল: `DATABASE_URL=file:/opt/render/project/src/db/prod.db` (absolute পাথ সবচেয়ে নির্ভরযোগ্য; relative দিলেও চলবে — অ্যাপ নিজেই ফোল্ডার বানিয়ে নেয়)
 6. Render এর ফ্রি প্ল্যানে WebSocket কাজ করে; তবে ১৫ মিনিট নিষ্ক্রিয় থাকলে সার্ভিস ঘুমিয়ে যায় (কোনো ভিজিটর এলে জেগে ওঠে)
+
+> ⚠️ ফ্রি প্ল্যানের ডিস্ক এফেমারাল — প্রতি deploy/restart-এ SQLite ডেটা (ওয়াচলিস্ট, ইন্ডিকেটর সেটিংস) রিসেট হয়। চার্ট ও লাইভ মার্কেট ডেটায় কোনো প্রভাব নেই।
+>
+> 🛠️ ট্রাবলশুটিং: deploy-এ `Cannot find module '.prisma/client/default'` দেখলে — পুরনো কমিটে `prisma generate` বাদ ছিল; বর্তমান কোডে `postinstall`-এ ঠিক করা আছে। Render-এ **Manual Deploy → Clear build cache & deploy** চালান।
 
 > মোবাইল অ্যাপে `https://your-app.onrender.com` দিয়ে সংযোগ করুন।
 
